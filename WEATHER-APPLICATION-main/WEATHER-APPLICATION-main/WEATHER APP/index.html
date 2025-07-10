@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Modern Weather App</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+ <nav>
+  <div class="nav-container">
+    <div class="logo">
+      <span class="material-symbols-outlined">partly_cloudy_day</span>
+      <span>WeatherApp</span>
+    </div>
+      <div class="search-bar">
+  <input type="text" id="cityInput" placeholder="Enter city name">
+  <button onclick="searchCity()">Search</button>
+  <button id="themeToggle" class="theme-toggle">
+    <span class="material-symbols-outlined">dark_mode</span>
+  </button>
+</div>
+
+    <div class="nav-links">
+      <a href="#heroSection" class="active">
+        <span class="material-symbols-outlined">device_thermostat</span>
+        <span class="nav-text">Current</span>
+      </a>
+      <a href="#forecastSection">
+        <span class="material-symbols-outlined">calendar_today</span>
+        <span class="nav-text">Forecast</span>
+      </a>
+      <a href="#charts">
+        <span class="material-symbols-outlined">bar_chart</span>
+        <span class="nav-text">Charts</span>
+      </a>
+      <a href="#sunriseSunset">
+        <span class="material-symbols-outlined">wb_twilight</span>
+        <span class="nav-text">Sun & Moon</span>
+      </a>
+      <a href="#map">
+        <span class="material-symbols-outlined">map</span>
+        <span class="nav-text">Map</span>
+      </a>
+      <a href="#contact">
+        <span class="material-symbols-outlined">mail</span>
+        <span class="nav-text">Contact</span>
+      </a>
+    </div>
+    <button class="hamburger">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+  </div>
+</nav>
+
+
+
+
+  <div id="heroSection" class="hero-card">
+    <!-- Hero content will be inserted here -->
+  </div>
+
+  <div class="loader" id="loader">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="container">
+    <div id="forecastSection" class="section">
+      <div class="forecast-toggle">
+        <button id="hourlyBtn" class="toggle-btn active" onclick="showHourlyForecast()">Hourly</button>
+        <button id="weeklyBtn" class="toggle-btn" onclick="showWeeklyForecast()">Weekly</button>
+      </div>
+      <div id="hourlySection">
+        <h2>24-Hour Forecast</h2>
+        <div id="hourly" class="forecast-container"></div>
+      </div>
+      <div id="weeklySection" style="display: none;">
+        <h2>7-Day Forecast</h2>
+        <div id="daily" class="forecast-container"></div>
+      </div>
+    </div>
+
+    <div id="charts" class="section">
+      <h2>Weather Charts</h2>
+      
+      <div class="chart-tabs">
+        <div class="chart-tab-buttons">
+          <button class="chart-tab active" onclick="showChartTab('temperature')">Temperature</button>
+          <button class="chart-tab" onclick="showChartTab('precipitation')">Precipitation</button>
+        </div>
+        
+        <div id="temperatureChart" class="chart-tab-content active">
+          <div class="chart-container" style="height: 350px;">
+            <canvas id="temperatureChartContainer"></canvas>
+          </div>
+        </div>
+        
+        <div id="precipitationChart" class="chart-tab-content">
+          <div class="chart-container" style="height: 350px;">
+            <canvas id="precipitationChartContainer"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="sunriseSunset" class="section">
+      <h2>Sun & Moon</h2>
+      <div class="sun-moon-container">
+        <!-- Sun Progress Bar -->
+        <div class="daylight-progress">
+          <div class="time-labels">
+            <div class="time-label sunrise">
+              <span class="material-symbols-outlined">wb_twilight</span>
+              <span id="sunriseTime">--:--</span>
+            </div>
+            <div class="time-label sunset">
+              <span class="material-symbols-outlined">nightlight</span>
+              <span id="sunsetTime">--:--</span>
+            </div>
+          </div>
+          <div class="progress-track">
+            <div class="progress-bar" id="daylightBar"></div>
+            <div class="sun" id="sunPosition"></div>
+          </div>
+          <div class="current-time">
+            <span class="material-symbols-outlined">schedule</span>
+            <span id="currentSolarTime">Current: --:--</span>
+          </div>
+        </div>
+        <!-- Moon Phase -->
+        <div class="moon-phase-card">
+          <div class="moon-visual">
+            <div class="moon" id="moonPhaseVisual"></div>
+          </div>
+          <div class="moon-details">
+            <h3>Moon Phase</h3>
+            <p id="moonPhaseText">--</p>
+            <p id="moonIllumination">Illumination: --%</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="map" class="section">
+      <h2>Weather Map</h2>
+      <div class="map-controls">
+        <button class="active" onclick="changeMapLayer('temp_new')">Temperature</button>
+        <button onclick="changeMapLayer('clouds_new')">Clouds</button>
+        <button onclick="changeMapLayer('precipitation_new')">Precipitation</button>
+        <button onclick="changeMapLayer('pressure_new')">Pressure</button>
+        <button onclick="changeMapLayer('wind_new')">Wind Speed</button>
+      </div>
+      <div id="windSpeedMap"></div>
+    </div>
+
+    <!-- New Contact Us Section -->
+    <div id="contact" class="section">
+      <h2>Contact Us</h2>
+      <div class="contact-container">
+        <div class="contact-form">
+          <form id="contactForm">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" required placeholder="Your name">
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required placeholder="Your email">
+            </div>
+            <div class="form-group">
+              <label for="subject">Subject</label>
+              <input type="text" id="subject" name="subject" required placeholder="Subject">
+            </div>
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" rows="5" required placeholder="Your message"></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="./script.js"></script>
+  
+</body>
+</html>
